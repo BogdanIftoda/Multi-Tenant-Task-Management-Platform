@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Change this to a strong password
+      MYSQL_DATABASE: task_management           # Optional: Specify a database to create
+      MYSQL_USER: admin                   # Optional: Create a new user
+      MYSQL_PASSWORD: admin         # Optional: Specify the user's password
+    ports:
+      - "3306:3306"                          # Expose MySQL on port 3306
+    volumes:
+      - mysql_data:/var/lib/mysql           # Persist data
+
+volumes:
+  mysql_data:
