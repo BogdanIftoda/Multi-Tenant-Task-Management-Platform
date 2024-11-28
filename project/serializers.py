@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from project.models import Project, Task
+from project.models import Project, Task, Label
 from tenant.models import User
 from tenant.serializers import UserReadSerializer
 
@@ -108,3 +108,9 @@ class TaskWriteSerializer(BaseTaskSerializer):
         user = self.context['request'].user
         validated_data['creator_id'] = user.id
         return super().create(validated_data)
+
+
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = '__all__'

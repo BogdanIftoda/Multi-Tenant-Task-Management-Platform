@@ -35,20 +35,6 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         return False
 
 
-class ObjectPermission(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user.is_superuser:
-            return True
-        elif user.is_admin and user.organization_id == obj.organization_id:
-            return True
-        else:
-            if request.method in permissions.SAFE_METHODS and user.organization_id == obj.organization_id:
-                return True
-            return False
-
-
 class OrganizationPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
