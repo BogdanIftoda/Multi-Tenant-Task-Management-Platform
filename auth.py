@@ -6,7 +6,7 @@ import requests
 if len(sys.argv) > 1:
     username_pasword = sys.argv[1]
 else:
-    username_pasword = "admin"
+    username_pasword = "stringaas"
 
 data = {"username": username_pasword, "password": username_pasword}
 url = "http://127.0.0.1:8000/auth/login/"

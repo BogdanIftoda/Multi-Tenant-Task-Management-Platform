@@ -1,0 +1,11 @@
+.env
+.vscode/
+.idea/
+**/*.pyc
+*.log
+*.logs
+/log/*.log
+*db.sqlite3
+.coverage
+media/
+static/

@@ -29,7 +29,7 @@ class BaseProjectModel(models.Model):
     description = models.TextField(null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    priority = models.CharField(max_length=1, choices=PRIORITIES, default=LOW)
+    priority = models.IntegerField(choices=PRIORITIES, default=LOW)
     status = models.CharField(max_length=1, choices=STATUSES, default=PENDING)
 
     class Meta:
@@ -50,5 +50,5 @@ class Project(BaseModel, BaseProjectModel):
 
 class Task(BaseProjectModel):
     project = models.ForeignKey('project.Project', on_delete=models.CASCADE)
-    assigned_to = models.ManyToManyField('tenant.User', related_name='assigned_to')
+    assigned_to = models.ManyToManyField('tenant.User', related_name='assigned_to', blank=True)
     labels = models.ManyToManyField('project.Label', related_name='tasks', blank=True)

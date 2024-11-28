@@ -18,6 +18,8 @@ class BaseViewSetTestCase(APITestCase):
         # Create superuser
         self.superuser = get_user_model().objects.create_user(
             username="superuser",
+            first_name="Superuser",
+            last_name="Superuser",
             password="password",
             email="superuser@s.com",
             role=self.role_superuser,
@@ -27,6 +29,8 @@ class BaseViewSetTestCase(APITestCase):
         # Create admin user
         self.admin = get_user_model().objects.create_user(
             username="admin",
+            first_name="Admin",
+            last_name="Admin",
             password="password",
             email="admin@s.com",
             role=self.role_admin,
@@ -36,6 +40,8 @@ class BaseViewSetTestCase(APITestCase):
         # Create regular user
         self.user1 = get_user_model().objects.create_user(
             username="regular_user",
+            first_name="Regular user 1",
+            last_name="Regular user 1",
             password="password",
             email="regular_user@s.com",
             role=self.role_user,
@@ -45,6 +51,8 @@ class BaseViewSetTestCase(APITestCase):
         # Create a second regular user for testing
         self.user2 = get_user_model().objects.create_user(
             username="regular_user_2",
+            first_name="Regular user 2",
+            last_name="Regular user 2",
             password="password",
             email="regular_user2@s.com",
             role=self.role_user,

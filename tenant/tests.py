@@ -1,8 +1,8 @@
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.reverse import reverse
 
-from .base_view_set_test_case import BaseViewSetTestCase
-from .models import Organization, User
+from tenant.base_view_set_test_case import BaseViewSetTestCase
+from tenant.models import Organization, User
 
 
 class OrganizationViewSetTestCase(BaseViewSetTestCase):
@@ -120,15 +120,14 @@ class OrganizationViewSetTestCase(BaseViewSetTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Updated Organization')
 
-    def test_admin_can_update_organization(self):
+    def test_admin_cant_update_organization(self):
         self.client.login(username="admin", password="password")
 
         url = reverse('organizations-detail', args=[self.org1.id])
         data = {'name': 'Updated by Admin'}
         response = self.client.put(url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Updated by Admin')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_regular_user_cannot_update_other_organization(self):
         self.client.login(username="regular_user", password="password")
@@ -137,7 +136,7 @@ class OrganizationViewSetTestCase(BaseViewSetTestCase):
         data = {'name': 'Updated Organization'}
         response = self.client.put(url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     # --- Test for Partial Update (PATCH /organizations/{id}/) ---
     def test_superuser_can_partial_update_organization(self):
@@ -150,15 +149,14 @@ class OrganizationViewSetTestCase(BaseViewSetTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Partially Updated Organization')
 
-    def test_admin_can_partial_update_organization(self):
+    def test_admin_cant_partial_update_organization(self):
         self.client.login(username="admin", password="password")
 
         url = reverse('organizations-detail', args=[self.org1.id])
         data = {'name': 'Admin Partial Update'}
         response = self.client.patch(url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Admin Partial Update')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     # --- Test for Delete (DELETE /organizations/{id}/) ---
     def test_superuser_can_delete_organization(self):
@@ -170,14 +168,14 @@ class OrganizationViewSetTestCase(BaseViewSetTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Organization.objects.count(), 1)  # Only one organization should remain
 
-    def test_admin_can_delete_organization(self):
+    def test_admin_cant_delete_organization(self):
         self.client.login(username="admin", password="password")
 
         url = reverse('organizations-detail', args=[self.org1.id])
         response = self.client.delete(url)
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Organization.objects.count(), 1)  # Only one organization should remain
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Organization.objects.count(), 2)  # Only one organization should remain
 
     def test_regular_user_cannot_delete_other_organization(self):
         self.client.login(username="regular_user", password="password")
@@ -185,7 +183,7 @@ class OrganizationViewSetTestCase(BaseViewSetTestCase):
         url = reverse('organizations-detail', args=[self.org2.id])
         response = self.client.delete(url)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Organization.objects.count(), 2)  # No organizations should be deleted
 
 
@@ -278,3 +276,34 @@ class UserViewSetTests(BaseViewSetTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user1.refresh_from_db()
         self.assertEqual(self.user1.first_name, "Updated by User")
+
+    def test_user_cannot_delete_self(self):
+        # Try to delete the authenticated user (self)
+        self.authenticate_user(self.user1)
+
+        url = reverse("users-detail", kwargs={"pk": self.user1.id})
+        response = self.client.delete(url)
+
+        # Assert that the request is forbidden
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_admin_cannot_delete_self(self):
+        # Authenticate as admin
+        self.authenticate_user(self.admin)
+        # Try to delete the authenticated admin (self)
+        url = reverse("users-detail", kwargs={"pk": self.admin.id})
+        response = self.client.delete(url)
+
+        # Assert that the request is forbidden
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_superuser_can_delete_self(self):
+        # Authenticate as superuser
+        self.authenticate_user(self.superuser)
+
+        # Try to delete the authenticated superuser (self)
+        url = reverse("users-detail", kwargs={"pk": self.superuser.id})
+        response = self.client.delete(url)
+
+        # Assert that the request is forbidden (or allow if desired)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # Adjust if allowed

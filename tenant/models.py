@@ -66,10 +66,8 @@ class User(AbstractBaseUser, BaseModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['first_name', 'organization'],
-                                    name='user: first name and organization constraint'),
-            models.UniqueConstraint(fields=['last_name', 'organization'],
-                                    name='user: last name and organization constraint'),
+            models.UniqueConstraint(fields=['first_name', "last_name", 'organization'],
+                                    name='user: first name last name and organization constraint'),
         ]
 
     def __str__(self):

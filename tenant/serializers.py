@@ -29,4 +29,4 @@ class UserWriteSerializer(UserBaseSerializer):
 
 class UserReadSerializer(UserBaseSerializer):
     class Meta(UserBaseSerializer.Meta):
-        fields = UserBaseSerializer.Meta.fields + ("id", "last_login")
+        fields = UserBaseSerializer.Meta.fields + ("id",)

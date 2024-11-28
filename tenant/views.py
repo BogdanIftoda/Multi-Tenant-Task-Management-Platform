@@ -10,7 +10,7 @@ from tenant.tenant_filter_decorator import filter_by_role_and_organization
 
 class OrganizationViewSet(CustomViewSet):
     serializer_class = OrganizationSerializer
-    permission_classes = (IsAuthenticated, OrganizationPermission,)
+    permission_classes = (IsAuthenticated, OrganizationPermission)
 
     def get_queryset(self):
         if not self.request.user.is_superuser:
