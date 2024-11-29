@@ -56,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.RequestLatencyMiddleware',
+    'core.middleware.simple_middleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -157,4 +159,38 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+# logger
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'level': 'INFO',
+            'handlers': ['file'],
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Adjust this level as needed
+            'propagate': False,
+        },
+    },
 }
